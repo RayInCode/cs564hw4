@@ -12,9 +12,12 @@
 
 int BufHashTbl::hash(const File* file, const int pageNo)
 {
-  int tmp, value;
-  tmp = (long)file;  // cast of pointer to the file object to an integer
+  unsigned int tmp, value;
+  tmp = (unsigned long)file;  // cast of pointer to the file object to an integer
+  cout << "tmp: " << tmp << endl;
+  cout << "pageNo: " << pageNo << endl;
   value = (tmp + pageNo) % HTSIZE;
+  cout << "value: " << value << endl;
   return value;
 }
 
@@ -53,11 +56,16 @@ Status BufHashTbl::insert(const File* file, const int pageNo, const int frameNo)
   int index = hash(file, pageNo);
 
   hashBucket* tmpBuc = ht[index];
+
+  cout << "index: " << index << endl;
+
   while (tmpBuc) {
     if (tmpBuc->file == file && tmpBuc->pageNo == pageNo)
       return HASHTBLERROR;
     tmpBuc = tmpBuc->next;
   }
+
+  cout << "insert 2" << endl;
 
   tmpBuc = new hashBucket;
   if (!tmpBuc)
@@ -67,6 +75,8 @@ Status BufHashTbl::insert(const File* file, const int pageNo, const int frameNo)
   tmpBuc->frameNo = frameNo;
   tmpBuc->next = ht[index];
   ht[index] = tmpBuc;
+
+    cout << "insert 3" << endl;
 
   return OK;
 }

@@ -58,10 +58,10 @@ private:
 
   void Clear() {  // initialize buffer frame for a new user
     	pinCnt = 0;
-	file = NULL;
-	pageNo = -1;
+      file = NULL;
+      pageNo = -1;
     	dirty = false;
-	valid = false;
+      valid = false;
   };
 
   void Set(File* filePtr, int pageNum) { 
@@ -86,14 +86,14 @@ struct BufStats
   int diskwrites;  // Number of pages written back to disk
 
   void clear()
-    {
-      accesses = diskreads = diskwrites = 0;
-    }
+  {
+    accesses = diskreads = diskwrites = 0;
+  }
       
   BufStats()
-    {
-      clear();
-    }
+  {
+    clear();
+  }
 };
 
 
