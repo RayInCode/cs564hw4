@@ -64,7 +64,15 @@ BufMgr::~BufMgr() {
     delete [] bufPool;
 }
 
+/*
+This method, basing on the clock algorithm, attempts to allocate a free(unvalid or evictable) frame in the buffer pool.
 
+frame: a reference for a frame index which will be set with the index of a available frame if there are any;
+Status: return "OK" if successful, otherwise return error prompts.
+
+This method can not set the frame description in advance. The caller following may get failed even there is a free frame in buffer pool. In that way, the found free frame
+will be in idle forever.
+*/
 const Status BufMgr::allocBuf(int & frame) 
 {
     Status status {OK};
@@ -101,7 +109,16 @@ const Status BufMgr::allocBuf(int & frame)
     return status = BUFFEREXCEEDED;
 }
 
-	
+/*
+This method is to read a specific page of a certain file from buffer pool or disk.
+
+file: a pointer to the objective file;
+PageNo: page number in the target file;
+page: a reference for a Page pointer which point to the address of target page if read successfully;
+Status: return "OK" if successful otherwise return error prompts.
+
+When the target page is in the buffer pool, we need to renew both pinCnt and refbit.
+*/
 const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 {
     Status status {OK};
@@ -146,7 +163,16 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     return status;
 }
 
+/*
+This method is used to unpin a page in the buffer pool when a caller want to declaim that it no longer use this page.
 
+file: a pointer to the objective file;
+PageNo: page number in the target file;
+dirty: a flag to show if this page has been modified by this caller;
+Status: return "OK" if successful otherwise return error prompts.
+
+Test wether this page is in the buffer pool prior to other setps.
+*/
 const Status BufMgr::unPinPage(File* file, const int PageNo, 
 			       const bool dirty) 
 {
@@ -170,6 +196,14 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     return status;
 }
 
+/*
+This method is to allocate a new page in the disk for a file and allocate a frame in the buffer pool for this page.
+
+file: a pointer to the objective file;
+PageNo: page number for this new page in the target file;
+page: a reference for a Page pointer which point to the address of target page if read successfully;
+Status: return "OK" if successful otherwise return error prompts.
+*/
 const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page) 
 {
     Status status {OK};
